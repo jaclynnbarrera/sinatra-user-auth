@@ -11,25 +11,27 @@ class ApplicationController < Sinatra::Base
     erb :home
   end
 
+  #renders signup form
   get '/registrations/signup' do
-
     erb :'/registrations/signup'
   end
 
+  #receives post request and handles user input
   post '/registrations' do
     @user = User.new(name: params["name"], email: params["email"], password: params["password"])
     @user.save
     session[:user_id] = @user.id
-
     redirect '/users/home'
   end
 
+  #renders login form
   get '/sessions/login' do
-
     # the line of code below render the view page in app/views/sessions/login.erb
     erb :'sessions/login'
   end
 
+  #received post request and handles user input. looks to find an exisiting entry
+  #and signs them in if found. otherwise, back to login
   post '/sessions' do
     @user = User.find_by(email: params[:email], password: params[:password])
     if @user
@@ -39,13 +41,14 @@ class ApplicationController < Sinatra::Base
     redirect '/sessions/login'
   end
 
+  #responsible for logging out
   get '/sessions/logout' do
     session.clear
     redirect '/'
   end
 
+  #render user's homepage
   get '/users/home' do
-
     @user = User.find(session[:user_id])
     erb :'/users/home'
   end
